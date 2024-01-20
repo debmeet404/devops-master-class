@@ -81,6 +81,117 @@ Containerization :
 - docker logs "container-id"
 - docker logs -f "container-id" [logs are attached to the terminal]
 - docker images
-- docker container ls
+- docker container ls (-a flag for stopped container as well)
 - docker container stop "container-id"
 
+---
+
+When we Install docker, we install 2 things
+- docker client
+- docker daemon
+docker client sends the commands over to docker daemon to acutally execute them
+Docker Daemon is responsible for local images, conatiners and pushing/pulling from the docker image registry
+
+---
+
+Reasons for popularity of Docker
+- Light Weight (in comparison to VMs as they have similar use cases) [VMs : Hardware > Host OS > Hypervisor > Guest OS1 + Sofware1 + Application1 / Guest OS2 + Software2 + Application2 etc] Whereas [Docker : Hardware > Host OS > Docker Engine > Container1 / Container2]
+- Standard App Packaging
+- Multi Platform Support
+- Isolated containers [Different VMs sharing the same host will affect each other. Whereas Containers are isolated.] [Problem with one container wont spread to other containers]
+
+
+---
+
+More Commands : 
+- docker pull mysql --> Only for pulling an image from registry, it does not launch the container [docker run would pull if not available and start as well]
+- docker search mysql --> all images that are available on registry will be shown
+- docker image history mysql --> all details about the layers in that docker image [we can also use image-id instead of name in this command]
+- docker image inspect "image-id" --> provides a lot of data about the image
+- docker container inspect "container-id"
+- docker image remove "image-id"
+- docker container rm "contianer-id"
+- docker run command is a short form of docker container run command
+- docker container pause "container-id"
+- docker container unpause "container-id"
+- docker container start is for restarting existing stopped containers, while docker container run is for creating and starting new container instances from images.
+---
+docker stop:
+
+    Permanently stops the container: Terminates all processes running inside the container.
+    Releases resources: Frees up the memory, CPU, and network resources used by the container.
+    Loss of state: Any temporary data or changes made within the container are lost unless explicitly persisted before stopping.
+    Use case: When you no longer need the container running and can afford to lose its state.
+
+docker pause:
+
+    Temporarily suspends the container: All processes in the container are frozen in their current state.
+    Preserves resources: Memory used by the container remains allocated, but CPU and network resources are released.
+    Maintains state: The container's memory state and any temporary data are preserved for when it's resumed.
+    Use case: When you need to quickly interrupt the container but want to resume it later without losing its state.
+
+---
+
+Stop:
+
+    Graceful termination: This is the preferred method. When you issue docker stop, the container receives a "SIGTERM" signal, gracefully telling it to shut down its main processes and perform any necessary cleanup before exiting. This allows applications within the container to perform critical tasks like saving data or closing connections, ensuring clean and consistent state.
+    Safety and stability: Graceful termination minimizes the risk of data corruption or application inconsistencies, leading to a more stable and predictable experience. It's especially crucial for containerized applications handling sensitive data or interacting with external resources.
+    Timeout and forceful stop: The container gets a reasonable chance to shut down gracefully. However, if it takes too long (configurable timeout), docker stop will forcefully terminate the container using a "SIGKILL" signal, effectively crashing it. This may lead to data loss or unexpected behavior.
+
+Kill:
+
+    Forceful termination: With docker kill, the container receives a "SIGKILL" signal directly, abruptly terminating all processes without any cleanup opportunity. This is akin to pulling the plug on a running computer.
+    Data loss and instability: Forceful termination can lead to data corruption, incomplete operations, and unpredictable behavior within the container. It's generally discouraged as it can compromise stability and cause potential issues within the application or surrounding ecosystem.
+    Use cases: docker kill can be helpful in rare situations where a container is unresponsive or stuck in a bad state. It's best used with caution and understanding of the potential consequences.
+
+Benefits of graceful termination:
+
+    Data integrity: Ensures proper data saving and closing of resources, minimizing the risk of corruption or loss.
+    Application consistency: Guarantees the application finishes its tasks cleanly, leading to a consistent and predictable state.
+    Stability and scalability: Promotes stable and reliable container operations, essential for robust and scalable applications.
+    Reduced troubleshooting: Graceful termination minimizes the occurrence of issues and unexpected behavior, simplifying troubleshooting efforts.
+
+----
+
+docker start:
+
+    Purpose: Resumes an already existing stopped container.
+    Effect: Starts the container and initializes its processes from the point where it was stopped.
+    Use case: When you need to continue working with a previously stopped container and want to retain its state.
+    Note: Requires the container to be in a "stopped" state, not paused or exited.
+
+docker unpause:
+
+    Purpose: Resumes a previously paused container.
+    Effect: Re-integrates the container back into the system, enabling resource allocation and process execution.
+    Use case: When you temporarily paused a running container and want to resume its operation without losing its current state.
+    Note: Requires the container to be in a "paused" state.
+
+docker run:
+
+    Purpose: Creates and starts a new container from a specified image.
+    Effect: Downloads the image if needed, prepares the container environment, and runs the defined command or entrypoint.
+    Use case: When you need to launch a new instance of an application based on an image.
+    Note: Creates a new container even if an existing one with the same name exists.
+
+Here's a table summarizing the key differences:
+| Feature | docker start | docker unpause | docker run |
+|---|---|---|---|
+| Existing container | Must exist and be stopped | Must exist and be paused | Doesn't need to exist |
+| Image download/build | None | None | Downloads or builds if needed |
+| Command execution | No command is run, user needs to use `docker exec` later | Starts the configured command or entrypoint | Runs the specified command or entrypoint |
+| Resource allocation | Starts resource allocation | Re-integrates into resource allocation | Allocates new resources |
+| State preservation | Resumes previous state | Resumes previous state | Starts a new state |
+| Use case | Resume stopped container | Resume paused container | Launch new application instance |
+
+---
+
+- docker container prune : remove all stopped containers
+
+- docker system COMMAND --> used to Manage Docker
+    - Commands:
+    - df:          Show docker disk usage
+    - events:      Get real time events from the server
+    - info:        Display system-wide information
+    - prune:       Remove unused data
+- docker stats "container-id"
