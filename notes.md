@@ -195,3 +195,44 @@ Here's a table summarizing the key differences:
     - info:        Display system-wide information
     - prune:       Remove unused data
 - docker stats "container-id"
+
+
+---
+
+- docker build -t debmeet404/python-test:1 . >>>>> Building docker image from Dockerfile.
+- -t for tag of the image
+- there is a "." at the end which is the build context
+- push to docker hub : docker push debmeet404/python-test:1
+
+
+---
+
+CMD vs ENTRYPOINT:
+
+    CMD: Use for default commands that might be changed at runtime or when supporting multiple entry points for an image.
+    ENTRYPOINT: Use for containers with a specific, fixed executable that should always run, even when arguments are provided.
+
+---
+
+- docker network ls
+- docker network inspect bridge 
+- two docker containers in bridge network mode cannot communicate with each other
+- docker network create currency-network --> create a custom network
+- docker run -d -p 8000:8000 --network=currency-network --name=currency-exchange 1ec
+--> launch container in custom network with a custom container name
+
+
+---
+
+- docker compose up [directory should have docker compose file]
+- add -d flag for detached mode
+- docker compose down
+- docker compose events
+- docker compose config --> helps validate the yaml file
+- docker compose images
+- docker compose ps
+- docker compose top
+- docker compose pause/unpause
+- docker compose stop/kill
+
+
