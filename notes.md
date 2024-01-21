@@ -235,4 +235,99 @@ CMD vs ENTRYPOINT:
 - docker compose pause/unpause
 - docker compose stop/kill
 
+---
 
+Kubernetes !
+
+- Kubernetes is a resource manager(virtual servers like Amazon EC2(Elastic Compute Cloud), Azure Virtual Machine, Google Compute Engine)
+- Kubernetes calls the above mentioned resources as a general term : node.
+- A cluster is a combination of worker nodes and master nodes.
+- Nodes that manage the cluster are called master nodes
+- Nodes that do the actual compute etc, are called worker nodes, or simply, nodes
+- kubernetes is also called as k8s
+- Different cloud providers provide their own implentations of Kubernetes
+    - EKS : Amazon elastic k8s service
+    - AKS : Azure k8s service
+    - GKE : Google k8s engine
+
+---
+
+kubectl : Kube Controller
+- kubectl create deployment hello-world-rest-api --image=in28min/hello-world-rest-api:0.0.1.RELEASE --> creates a deployment, replicaset and a pod
+- kubectl expose deployment hello-world-rest-api --type=LoadBalancer --port=8080 --> creates a service --> a service provides a lifetime ip address for clients. Pods inside a service may be going up and down etc with varying ip addresses, but the client will be able to use our app from a fixed endpoint.[load balancer]
+- kubectl get events
+- kubectl get pods
+- kubectl get replicaset
+- kubectl get deployment
+- kubectl get service
+- a pod is the smallest deployable unit in k8s (and not containers)
+- a pod can have multiple conatiners inside it, which share resources
+- inside a pod, containers can communicate with each other using localhost
+- kubectl describe pod "pod-id"
+- kubectl scale deployment hello-world-rest-api --replicas=3
+- replicaset ensures that the desired number of pods are always running
+- kubectl delete pod hello-world-rest-api-58ff5dd898-62l9d
+- kubectl autoscale deployment hello-world-rest-api --max=10 --cpu-percent=70
+- kubectl edit deployment hello-world-rest-api #minReadySeconds: 15
+- kubectl set image deployment hello-world-rest-api hello-world-rest-api=in28min/hello-world-rest-api:0.0.2.RELEASE
+
+
+---
+
+Kubernetes Architecture 
+- Master Node
+    - API Server - kube-apiserver
+    - Distributed Database - etcd
+    - Scheduler - kube-scheduler
+    - Controller Manager - kube-controller-manager
+- Worker Node / Node
+    - Node Agent - kubelet
+    - Networking Component - kube-proxy
+    - Container Runtime - (CRI - docker, rkt etc)
+    - Pods (multiple pods running containers)
+- kubectl get componentstatuses
+
+---
+
+Horizontal vs Vertical Scaling 
+
+Imagine a bustling restaurant. When the lunch crowd arrives, you have two options to handle the increased demand:
+
+    Vertical scaling: You hire a stronger chef, buy a bigger stove, and add more tables (like adding RAM and CPU to a single server). This approach is like scaling up. It's faster and simpler to implement, but also has limitations, like limited physical space or the chef's stamina.
+
+    Horizontal scaling: You bring in additional chefs, set up another kitchen with identical equipment, and add more tables in another room (like adding more servers to distribute the load). This approach is like scaling out. It takes more time and resources to set up, but it can handle much larger crowds and is more flexible.
+
+Here's a deeper dive into horizontal vs. vertical scaling, with their pros and cons, to help you choose the right approach for your needs.
+
+Horizontal Scaling
+
+    Adds more machines (nodes) to a system.
+    Distributes the load among multiple servers.
+    Pros:
+        Highly scalable: Can handle massive traffic increases.
+        Resilient: Failure of one node doesn't affect others.
+        Cost-effective: Can be cheaper than vertically scaling a single server.
+    Cons:
+        More complex: Requires setup and management of multiple servers.
+        Latency considerations: May introduce network latencies.
+        Data partitioning needed: Data needs to be distributed across nodes.
+
+Vertical Scaling
+
+    Adds more resources (CPU, RAM, storage) to a single machine.
+    Increases the capacity of the existing server.
+    Pros:
+        Simple and fast: Easier to implement and manage.
+        Lower initial cost: Requires less upfront investment.
+        No data partitioning: Data remains on the same server.
+    Cons:
+        Limited scalability: Reaches a physical limit of a single server.
+        Single point of failure: Entire system goes down if the server fails.
+        Can be expensive: Upgrading hardware can be costly.
+
+When to Choose Each
+
+    Horizontal scaling: Ideal for applications with high traffic or resource demands, like e-commerce, streaming services, and large databases.
+    Vertical scaling: Suitable for smaller applications with limited traffic or where simplicity and speed are crucial.
+
+---
